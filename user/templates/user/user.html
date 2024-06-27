@@ -1,0 +1,9 @@
+<html>
+<head></head>
+<body>
+    <h1>Trang home sau khi log in của từng user</h1>
+    <h3>Hello {{ request.user}} </h3>
+    <a href="{% url "home" %}">Home</a>
+    <a href = {% url "logout" %}>Logout</a>
+</body>
+</html>

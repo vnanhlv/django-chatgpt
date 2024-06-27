@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Part Layout with Selections</title>
+    <script src="{% static "pos/main.js" %}"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        clifford: '#da373d',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        function toggleMenu(id) {
+            const menu = document.getElementById(id);
+            menu.classList.toggle('hidden');
+        }
+    </script>
+</head>
+<body class="flex h-screen">
+    <!-- Left Sidebar -->
+    <aside class="w-64 bg-gray-800 text-white p-6">
+        <div class="mb-8">
+            <img src="logo.png" alt="Logo" class="w-32">
+        </div>
+        <nav>
+            <ul>
+                <li class="mb-4">
+                    <button onclick="toggleMenu('ordersMenu')" class="w-full text-left">Orders</button>
+                    <ul id="ordersMenu" class="ml-4 hidden">
+                        <li>Orders</li>
+                    </ul>
+                </li>
+                <li class="mb-4">
+                    <button onclick="toggleMenu('engagementsMenu')" class="w-full text-left">Engagements</button>
+                    <ul id="engagementsMenu" class="ml-4 hidden">
+                        <li>Engagements</li>
+                    </ul>
+                </li>
+                <li>
+                    <button onclick="toggleMenu('usersMenu')" class="w-full text-left">Users</button>
+                    <ul id="usersMenu" class="ml-4 hidden">
+                        <li>Users</li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col">
+        <header class="bg-gray-100 p-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Dashboard</h1>
+            <div class="flex items-center space-x-4">
+                <form method="POST" class="flex space-x-2">
+                    {% csrf_token %}
+                    <div class="flex items-center">
+                        <label for="{{ group_form.group.id_for_label }}" class="sr-only">Select Group</label>
+                        {{ group_form.group }}
+                    </div>
+                    <div class="flex items-center">
+                        <label for="{{ page_form.page.id_for_label }}" class="sr-only">Select Page</label>
+                        {{ page_form.page }}
+                    </div>
+                    <button type="submit" class="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">Go</button>
+                </form>
+                <div class="date-selector">
+                    <div class="quick-select">
+                      <button id="today">Hôm nay</button>
+                      <button id="yesterday">Hôm qua</button>
+                      <button id="last7days">7 ngày qua</button>
+                      <button id="lastMonth">Tháng trước</button>
+                      <button id="weekToDate">Đầu tuần đến nay</button>
+                      <button id="monthToDate">Đầu tháng đến nay</button>
+                    </div>
+                    
+                    <div class="date-range">
+                      <input type="text" id="start-date" name="start_date" placeholder="Từ ngày">
+                      <input type="text" id="end-date" name="end_date" placeholder="Đến ngày">
+                    </div>
+                    
+                    <button id="apply">Áp dụng</button>
+                </div>
+                <nav>
+                    <ul class="flex space-x-4">
+                        <li><a href="#" class="text-blue-600">Home</a></li>
+                        <li><a href="#" class="text-blue-600">Profile</a></li>
+                        <li><a href="#" class="text-blue-600">Settings</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+        <div class="flex-1 p-4 bg-white overflow-auto">
+            {% if data %}
+            <h2 class="text-lg font-semibold mb-2">TƯƠNG TÁC</h2>
+            <div class="overflow-x-auto shadow-sm rounded-lg">
+                <table class="min-w-full bg-white text-xs">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            {% for header in data.0 %}
+                                <th class="px-2 py-1 text-left font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">{{ header }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for row in data|slice:"1:" %}
+                            <tr class="hover:bg-gray-50">
+                                {% for cell in row %}
+                                    <td class="px-2 py-1 whitespace-nowrap">{{ cell }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <h2 class="text-md font-medium text-gray-700">Chưa có page hoặc nhóm page được chọn hoặc không có dữ liệu, xin mời chọn lại</h2>
+            {% endif %}
+        </div>
+        <div id="results-container">
+            <!-- Results will be loaded here -->
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{% if data %}
+  <table>
+    <!-- Assuming the first item in data is the header -->
+    <thead>
+      <tr>
+        {% for header in data.0 %}
+          <th>{{ header }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in data|slice:"1:" %}
+        <tr>
+          {% for cell in row %}
+            <td>{{ cell }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No data available for the selected date range.</p>
+{% endif %}
